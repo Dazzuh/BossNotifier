@@ -10,9 +10,7 @@ using BepInEx.Configuration;
 using Comfort.Common;
 using BepInEx.Logging;
 using System.Text;
-using BepInEx.Bootstrap;
 using System;
-using System.Linq;
 using HarmonyLib;
 
 #pragma warning disable IDE0051 // Remove unused private members

@@ -56,6 +56,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>References\Comfort.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="spt-reflection">
       <HintPath>References\spt-reflection.dll</HintPath>
     </Reference>
