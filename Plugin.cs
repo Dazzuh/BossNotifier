@@ -10,8 +10,6 @@ using BepInEx.Configuration;
 using Comfort.Common;
 using BepInEx.Logging;
 using System.Text;
-using System;
-using HarmonyLib;
 
 #pragma warning disable IDE0051 // Remove unused private members
 
@@ -19,9 +17,6 @@ namespace BossNotifier {
     [BepInPlugin("Mattdokn.BossNotifier", "BossNotifier", "1.6.0")]
     [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
     public class BossNotifierPlugin : BaseUnityPlugin {
-        public static FieldInfo FikaIsPlayerHost;
-
-
         // Configuration entries
         public static ConfigEntry<KeyboardShortcut> showBossesKeyCode;
         public static ConfigEntry<bool> showNotificationsOnRaidStart;
@@ -108,11 +103,6 @@ namespace BossNotifier {
         private void Awake() {
             logger = Logger;
 
-            Type FikaUtilExternalType = Type.GetType("Fika.Core.Coop.Utils.FikaBackendUtils, Fika.Core", false);
-            if (FikaUtilExternalType != null) {
-                FikaIsPlayerHost = AccessTools.Field(FikaUtilExternalType, "MatchingType");
-            }
-
             // Initialize configuration entries
             showBossesKeyCode = Config.Bind("General", "Keyboard Shortcut", new KeyboardShortcut(KeyCode.O), "Key to show boss notifications.");
             showNotificationsOnRaidStart = Config.Bind("General", "Show Bosses on Raid Start", true, "Show boss notifications on raid start.");
@@ -141,6 +131,9 @@ namespace BossNotifier {
             Config.SettingChanged += Config_SettingChanged;
 
             Logger.LogInfo($"Plugin BossNotifier is loaded!");
+
+            // Initialize Fika integration
+            FikaIntegration.Initialize();
         }
 
         // Event handler for configuration changes
@@ -205,11 +198,14 @@ namespace BossNotifier {
                 // Add the boss entry
                 bossesInRaid.Add(boss, location);
             }
+            // After updating, send the new boss list to all clients if Fika is present and this is the host
+            FikaIntegration.SendBossListToClients(bossesInRaid);
         }
 
         // Handle boss location spawns
         [PatchPostfix]
         private static void PatchPostfix(BossLocationSpawn __instance) {
+            if (FikaIntegration.IsClient()) return;
             // If the boss will spawn
             if (__instance.ShallSpawn) {
                 // Get it's name, if no name found then return.
@@ -263,6 +259,12 @@ namespace BossNotifier {
 
             vicinityNotifications.Enqueue($"{name} {(BossNotifierPlugin.pluralBosses.Contains(name) ? "have" : "has")} been detected in your vicinity.");
 
+            // Sync vicinity notification to clients if running as host
+            if (FikaIntegration.IsHost())
+            {
+                FikaIntegration.SendVicinityNotificationToClients($"{name} {(BossNotifierPlugin.pluralBosses.Contains(name) ? "have" : "has")} been detected in your vicinity.");
+            }
+
             //if (BossNotifierMono.Instance.intelCenterLevel >= BossNotifierPlugin.intelCenterDetectedUnlockLevel.Value) {
             //    NotificationManagerClass.DisplayMessageNotification($"{name} {(BossNotifierPlugin.pluralBosses.Contains(name) ? "have" : "has")} been detected in your vicinity.", ENotificationDurationType.Long);
             //    BossNotifierMono.Instance.GenerateBossNotifications();
@@ -291,7 +293,6 @@ namespace BossNotifier {
         public int intelCenterLevel;
 
         private void SendBossNotifications() {
-            if (!ShouldFunction()) return;
             if (intelCenterLevel < BossNotifierPlugin.intelCenterUnlockLevel.Value) return;
 
             // If we have no notifications to display, send one saying there's no bosses located.
@@ -346,18 +347,19 @@ namespace BossNotifier {
             BotBossPatch.spawnedBosses.Clear();
         }
 
-        public bool ShouldFunction() {
-            if (BossNotifierPlugin.FikaIsPlayerHost == null) return true;
-            return (int)BossNotifierPlugin.FikaIsPlayerHost.GetValue(null) == 2;
-        }
-
         public void GenerateBossNotifications() {
             // Clear out boss notification cache
             bossNotificationMessages = new List<string>();
-
             // Check if it's daytime to prevent showing Cultist notif.
+            bool isDayTime;
             // This is the same method that DayTimeCultists patches so if that mod is installed then this always returns false
-            bool isDayTime = Singleton<IBotGame>.Instance.BotsController.ZonesLeaveController.IsDay();
+            if (FikaIntegration.IsClient()) {
+                // IBotGame.Instance is null as a Fika client, so we skip the isDayTime check, maybe there's an alternate way to check for day time?
+                BossNotifierPlugin.Log(LogLevel.Debug, "FikaIntegration.IsClient() is true, skipping isDayTime check");
+                isDayTime = false;
+            } else {
+                isDayTime = Singleton<IBotGame>.Instance.BotsController.ZonesLeaveController.IsDay();
+            }
 
             // Get whether location is unlocked or not.
             bool isLocationUnlocked = intelCenterLevel >= BossNotifierPlugin.intelCenterLocationUnlockLevel.Value;
