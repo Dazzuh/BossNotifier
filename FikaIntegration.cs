@@ -1,58 +1,16 @@
+using System;
 using System.Collections.Generic;
 using BepInEx.Logging;
 using Comfort.Common;
 using Fika.Core.Coop.Utils;
+using Fika.Core.Modding;
+using Fika.Core.Modding.Events;
 using Fika.Core.Networking;
+using BossNotifier.Packets;
 using LiteNetLib;
-using LiteNetLib.Utils;
 
 namespace BossNotifier
 {
-    // Packet for synchronizing boss list between host and clients
-    public class BossListPacket : INetSerializable
-    {
-        public readonly List<string> BossNames = new List<string>();
-        public readonly List<string> Locations = new List<string>();
-
-        public void Serialize(NetDataWriter writer)
-        {
-            writer.Put(BossNames.Count);
-            for (int i = 0; i < BossNames.Count; i++)
-            {
-                writer.Put(BossNames[i]);
-                writer.Put(Locations[i]);
-            }
-        }
-
-        public void Deserialize(NetDataReader reader)
-        {
-            BossNames.Clear();
-            Locations.Clear();
-            int count = reader.GetInt();
-            for (int i = 0; i < count; i++)
-            {
-                BossNames.Add(reader.GetString());
-                Locations.Add(reader.GetString());
-            }
-        }
-    }
-
-    // Packet for synchronizing vicinity notifications between host and clients
-    public class VicinityNotificationPacket : INetSerializable
-    {
-        public string Message;
-
-        public void Serialize(NetDataWriter writer)
-        {
-            writer.Put(Message);
-        }
-
-        public void Deserialize(NetDataReader reader)
-        {
-            Message = reader.GetString();
-        }
-    }
-
     // Static class to handle all Fika-related functionality
     public static class FikaIntegration
     {
@@ -60,13 +18,14 @@ namespace BossNotifier
         public static void Initialize()
         {
             BossNotifierPlugin.Log(LogLevel.Debug, "FikaIntegration.Initialize called");
-            // Register Fika packet handler using Fika's event system
-            Fika.Core.Modding.FikaEventDispatcher.SubscribeEvent<Fika.Core.Modding.Events.FikaNetworkManagerCreatedEvent>(OnFikaNetworkManagerCreated);
+            // Register Fika packet handler using Fika's event system by calling new Action to avoid errors when fika
+            // is not present. Thanks Tyfon for this tip.
+            FikaEventDispatcher.SubscribeEvent(new Action<FikaNetworkManagerCreatedEvent>(OnFikaNetworkManagerCreated));
             BossNotifierPlugin.Log(LogLevel.Debug, "Subscribed to FikaNetworkManagerCreated event");
         }
 
         // Handler for Fika network manager creation event
-        private static void OnFikaNetworkManagerCreated(Fika.Core.Modding.Events.FikaNetworkManagerCreatedEvent evt)
+        private static void OnFikaNetworkManagerCreated(FikaNetworkManagerCreatedEvent evt)
         {
             BossNotifierPlugin.Log(LogLevel.Debug, "OnFikaNetworkManagerCreated event received");
             // Only register if this is a client
@@ -76,9 +35,9 @@ namespace BossNotifier
                 var netMan = evt.Manager as FikaClient;
                 if (!netMan) return;
                 BossNotifierPlugin.Log(LogLevel.Debug, "FikaClient instance found, registering packet");
-                netMan.RegisterPacket<BossListPacket>(OnBossListPacket);
+                netMan.RegisterPacket(new Action<BossListPacket>(OnBossListPacket));
                 BossNotifierPlugin.Log(LogLevel.Info, "Registered BossListPacket handler for Fika client via event.");
-                netMan.RegisterPacket<VicinityNotificationPacket>(OnVicinityNotificationPacket);
+                netMan.RegisterPacket(new Action<VicinityNotificationPacket>(OnVicinityNotificationPacket));
                 BossNotifierPlugin.Log(LogLevel.Info, "Registered VicinityNotificationPacket handler for Fika client via event.");
             }
         }
@@ -119,7 +78,11 @@ namespace BossNotifier
             if (netMan)
             {
                 BossNotifierPlugin.Log(LogLevel.Debug, "FikaServer instance found, sending BossListPacket to all clients");
-                var packet = new BossListPacket();
+                var packet = new BossListPacket
+                {
+                    BossNames = new List<string>(),
+                    Locations = new List<string>()
+                };
                 foreach (var kvp in bossesInRaid)
                 {
                     packet.BossNames.Add(kvp.Key);
