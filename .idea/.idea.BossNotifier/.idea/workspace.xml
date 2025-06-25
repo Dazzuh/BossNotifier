@@ -5,16 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c20bd094-4430-437b-a735-53767ec8b00b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/BossNotifier.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BossNotifier.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/0Harmony.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/Assembly-CSharp.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/BepInEx.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/Comfort.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/UnityEngine.CoreModule.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/UnityEngine.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/References/spt-reflection.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packets/BossListPacket.cs" beforeDir="false" afterPath="$PROJECT_DIR$/packets/BossListPacket.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packets/BossNotifier.fika.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/packets/BossNotifier.fika.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +45,9 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/b4e80bd296bc48ba89d931486f299d701530c0/a7/30b22740/Component.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/FikaIntegration.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://S:/SPT-Dev/Projects/BossNotifier/BossNotifier/Properties/AssemblyInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://S:/SPT-Dev/Projects/BossNotifier/BossNotifier/Properties/AssemblyInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packets/BossListPacket.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://S:/SPT-Dev/Projects/BossNotifier/BossNotifier/packets/BossListPacket.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://S:/SPT-Dev/Projects/BossNotifier/BossNotifier/packets/BossListPacket.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/packets/VicinityNotificationPacket.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -123,7 +116,7 @@
       <workItem from="1749289831234" duration="75000" />
       <workItem from="1749289916766" duration="20000" />
       <workItem from="1750880143281" duration="1061000" />
-      <workItem from="1750881232669" duration="1153000" />
+      <workItem from="1750881232669" duration="1463000" />
     </task>
     <task id="LOCAL-00001" summary="Fika integration - Syncs bosses between host and clients.">
       <option name="closed" value="true" />
@@ -149,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750880380842</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Updated csproj to fix build errors and rework references.">
+      <option name="closed" value="true" />
+      <created>1750882616019</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1750882616019</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -189,7 +190,8 @@
     <MESSAGE value="t" />
     <MESSAGE value="Seperated packets into their own .dll, reworked FikaIntegration to prevent errors when Fika isn't installed." />
     <MESSAGE value="Apparently I forgot to commit this file? Whoops " />
-    <option name="LAST_COMMIT_MESSAGE" value="Apparently I forgot to commit this file? Whoops " />
+    <MESSAGE value="Updated csproj to fix build errors and rework references." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated csproj to fix build errors and rework references." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -1,14 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <SPTDir Condition="'$(SPTDir)' == ''">S:\SPT-Dev</SPTDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyName>BossNotifier.fika</AssemblyName>
     <RootNamespace>BossNotifier.Packets</RootNamespace>
+    <generateassemblyinfo>false</generateassemblyinfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="com.fika.core">
-      <HintPath>..\References\Fika.Core.dll</HintPath>
+      <HintPath>$(SPTDir)\BepInEx\plugins\Fika.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <Target Name="PostBuildCopyPlugin" AfterTargets="PostBuildEvent">
+    <Exec Command='copy /Y "$(TargetPath)" "$(SPTDir)\BepInEx\plugins\$(TargetFileName)"' />
+  </Target>
 </Project>
 
