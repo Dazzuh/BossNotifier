@@ -8,7 +8,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>BossNotifier</AssemblyName>
     <Product>BossNotifier</Product>
-    <Version>1.6.0</Version>
+    <Version>1.6.0-fika</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <generateassemblyinfo>false</generateassemblyinfo>
@@ -75,6 +75,6 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
   <Target Name="PostBuildCopyPlugin" AfterTargets="PostBuildEvent">
-    <Exec Command='copy /Y "$(TargetPath)" "$(SPTDir)\BepInEx\plugins\$(TargetFileName)"' />
+    <Exec Command='copy /Y "$(TargetPath)" "$(SPTDir)\BepInEx\plugins\BossNotifier\$(TargetFileName)"' />
   </Target>
 </Project>

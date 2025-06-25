@@ -16,7 +16,7 @@
     </Reference>
   </ItemGroup>
   <Target Name="PostBuildCopyPlugin" AfterTargets="PostBuildEvent">
-    <Exec Command='copy /Y "$(TargetPath)" "$(SPTDir)\BepInEx\plugins\$(TargetFileName)"' />
+    <Exec Command='copy /Y "$(TargetPath)" "$(SPTDir)\BepInEx\plugins\BossNotifier\$(TargetFileName)"' />
   </Target>
 </Project>
 
