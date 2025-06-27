@@ -16,7 +16,7 @@ using BepInEx.Bootstrap;
 #pragma warning disable IDE0051 // Remove unused private members
 
 namespace BossNotifier {
-    [BepInPlugin("Mattdokn.BossNotifier", "BossNotifier", "1.6.0-fika")]
+    [BepInPlugin("Mattdokn.BossNotifier", "BossNotifier", "1.7.0")]
     [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
     public class BossNotifierPlugin : BaseUnityPlugin {
         // Configuration entries

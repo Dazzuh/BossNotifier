@@ -8,7 +8,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>BossNotifier</AssemblyName>
     <Product>BossNotifier</Product>
-    <Version>1.6.0-fika</Version>
+    <Version>1.7.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <generateassemblyinfo>false</generateassemblyinfo>

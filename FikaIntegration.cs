@@ -14,6 +14,7 @@ namespace BossNotifier
     // Static class to handle all Fika-related functionality
     public static class FikaIntegration
     {
+        private static BossListPacket? _bossPacket;
         // Register Fika event handlers
         public static void Initialize()
         {
@@ -21,6 +22,7 @@ namespace BossNotifier
             // Register Fika packet handler using Fika's event system by calling new Action to avoid errors when fika
             // is not present. Thanks Tyfon for this tip.
             FikaEventDispatcher.SubscribeEvent(new Action<FikaNetworkManagerCreatedEvent>(OnFikaNetworkManagerCreated));
+            FikaEventDispatcher.SubscribeEvent(new Action<PeerConnectedEvent>(OnPeerConnected));
             BossNotifierPlugin.Log(LogLevel.Debug, "Subscribed to FikaNetworkManagerCreated event");
         }
 
@@ -78,6 +80,7 @@ namespace BossNotifier
             if (netMan)
             {
                 BossNotifierPlugin.Log(LogLevel.Debug, "FikaServer instance found, sending BossListPacket to all clients");
+
                 var packet = new BossListPacket
                 {
                     BossNames = new List<string>(),
@@ -88,12 +91,29 @@ namespace BossNotifier
                     packet.BossNames.Add(kvp.Key);
                     packet.Locations.Add(kvp.Value);
                 }
+
+                _bossPacket = packet;
                 netMan.SendDataToAll(ref packet, DeliveryMethod.ReliableOrdered);
             }
             else
             {
                 BossNotifierPlugin.Log(LogLevel.Debug, "FikaServer instance not found, skipping packet send");
             }
+        }
+
+        // Send the boss list to a newly connected peer (called from host)
+        private static void OnPeerConnected(PeerConnectedEvent peerEvt)
+        {
+            var peer = peerEvt.Peer;
+            var netMan = Singleton<FikaServer>.Instance;
+            BossNotifierPlugin.Log(LogLevel.Debug, $"OnPeerConnected called for peer {peer}");
+            if (!netMan || !_bossPacket.HasValue)
+            {
+                BossNotifierPlugin.Log(LogLevel.Debug, $"OnPeerConnected: FikaServer instance not found or boss packet not initialized, skipping send to peer {peer}");
+                return;
+            }
+            var bossPacket = _bossPacket.Value;
+            netMan.SendDataToPeer(peer, ref bossPacket, DeliveryMethod.ReliableOrdered);
         }
 
         // Send a vicinity notification to all clients (called from host)
@@ -123,4 +143,3 @@ namespace BossNotifier
         }
     }
 }
-
