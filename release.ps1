@@ -1,5 +1,5 @@
-$source = "bin\Debug\net472"
-$packets = "packets\bin\Debug\net472"
+$source = "bin\Release\net472"
+$packets = "packets\bin\Release\net472"
 $zip = "BossNotifier-fika.zip"
 
 # Remove old zip if it exists
