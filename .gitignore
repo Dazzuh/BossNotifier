@@ -400,3 +400,6 @@ FodyWeavers.xsd
 *.sln.iml
 /Server
 .idea
+
+# Release file
+BossNotifier-fika.zip
