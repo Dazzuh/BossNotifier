@@ -22,6 +22,7 @@ namespace BossNotifier
             // Register Fika packet handler using Fika's event system by calling new Action to avoid errors when fika
             // is not present. Thanks Tyfon for this tip.
             FikaEventDispatcher.SubscribeEvent(new Action<FikaNetworkManagerCreatedEvent>(OnFikaNetworkManagerCreated));
+            FikaEventDispatcher.SubscribeEvent(new Action<FikaNetworkManagerDestroyedEvent>(OnFikaNetworkManagerDestroyed));
             FikaEventDispatcher.SubscribeEvent(new Action<PeerConnectedEvent>(OnPeerConnected));
             BossNotifierPlugin.Log(LogLevel.Debug, "Subscribed to FikaNetworkManagerCreated event");
         }
@@ -42,6 +43,13 @@ namespace BossNotifier
                 netMan.RegisterPacket(new Action<VicinityNotificationPacket>(OnVicinityNotificationPacket));
                 BossNotifierPlugin.Log(LogLevel.Info, "Registered VicinityNotificationPacket handler for Fika client via event.");
             }
+        }
+
+        private static void OnFikaNetworkManagerDestroyed(FikaNetworkManagerDestroyedEvent evt)
+        {
+            BossNotifierPlugin.Log(LogLevel.Debug, "OnFikaNetworkManagerDestroyed event received");
+            if (!_bossPacket.HasValue) return;
+            _bossPacket = null;
         }
 
         // Called when a BossListPacket is received from the host
