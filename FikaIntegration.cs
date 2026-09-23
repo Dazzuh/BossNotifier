@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using BepInEx.Logging;
 using Comfort.Common;
-using Fika.Core.Coop.Utils;
 using Fika.Core.Modding;
 using Fika.Core.Modding.Events;
 using Fika.Core.Networking;
 using BossNotifier.Packets;
-using LiteNetLib;
+using Fika.Core.Networking.LiteNetLib;
+using Fika.Core.Main.Utils;
 
 namespace BossNotifier
 {
@@ -101,7 +101,7 @@ namespace BossNotifier
                 }
 
                 _bossPacket = packet;
-                netMan.SendDataToAll(ref packet, DeliveryMethod.ReliableOrdered);
+                netMan.SendData(ref packet, DeliveryMethod.ReliableOrdered, true);
             }
             else
             {
@@ -121,7 +121,7 @@ namespace BossNotifier
                 return;
             }
             var bossPacket = _bossPacket.Value;
-            netMan.SendDataToPeer(peer, ref bossPacket, DeliveryMethod.ReliableOrdered);
+            netMan.SendDataToPeer(ref bossPacket, DeliveryMethod.ReliableOrdered, peer);
         }
 
         // Send a vicinity notification to all clients (called from host)
@@ -132,7 +132,7 @@ namespace BossNotifier
             {
                 BossNotifierPlugin.Log(LogLevel.Debug, $"FikaServer instance found, sending VicinityNotificationPacket to all clients: {message}");
                 var packet = new VicinityNotificationPacket { Message = message };
-                netMan.SendDataToAll(ref packet, DeliveryMethod.ReliableOrdered);
+                netMan.SendData(ref packet, DeliveryMethod.ReliableOrdered, true);
             }
             else
             {

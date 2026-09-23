@@ -318,12 +318,12 @@ namespace BossNotifier {
 
             // If we have no notifications to display, send one saying there's no bosses located.
             if (bossNotificationMessages.Count == 0) {
-                NotificationManagerClass.DisplayMessageNotification("No Bosses Located", ENotificationDurationType.Long);
+                NotificationManager.DisplayMessageNotification("No Bosses Located", ENotificationDurationType.Long);
                 return;
             }
 
             foreach (var bossMessage in bossNotificationMessages) {
-                NotificationManagerClass.DisplayMessageNotification(bossMessage, ENotificationDurationType.Long);
+                NotificationManager.DisplayMessageNotification(bossMessage, ENotificationDurationType.Long);
             }
         }
 
@@ -351,7 +351,7 @@ namespace BossNotifier {
             if (BotBossPatch.vicinityNotifications.Count > 0) {
                 string notif = BotBossPatch.vicinityNotifications.Dequeue();
                 if (Instance.intelCenterLevel >= BossNotifierPlugin.intelCenterDetectedUnlockLevel.Value) {
-                    NotificationManagerClass.DisplayMessageNotification(notif, ENotificationDurationType.Long);
+                    NotificationManager.DisplayMessageNotification(notif, ENotificationDurationType.Long);
                     Instance.GenerateBossNotifications();
                 }
             }

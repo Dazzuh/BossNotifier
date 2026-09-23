@@ -1,5 +1,4 @@
-using LiteNetLib;
-using LiteNetLib.Utils;
+using Fika.Core.Networking.LiteNetLib.Utils;
 
 namespace BossNotifier.Packets
 {
