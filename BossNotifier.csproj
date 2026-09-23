@@ -8,7 +8,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>BossNotifier</AssemblyName>
     <Product>BossNotifier</Product>
-    <Version>1.7.1</Version>
+    <Version>1.8.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <generateassemblyinfo>false</generateassemblyinfo>
